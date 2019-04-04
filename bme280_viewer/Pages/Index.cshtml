@@ -1,0 +1,57 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">寝室</h1>
+    <div id="curve_chart" style="width: 900px; height: 500px"></div>
+    <div id="curve_chart2" style="width: 900px; height: 500px"></div>
+
+</div>
+
+<script type="text/javascript">
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Time', '気温', '湿度'],
+            @foreach (var item in Model.Bme280List)
+                    {
+@:['@item.Created'
+@:,@item.Temperature
+@:,@item.Hum
+@:],
+}
+        ]);
+
+        var data2 = google.visualization.arrayToDataTable([
+            ['Time', '気圧'],
+            @foreach (var item in Model.Bme280List)
+                    {
+@:['@item.Created'
+@:,@item.Pressure
+@:],
+}
+        ]);
+
+        var options = {
+            title: '気温と湿度',
+            curveType: 'function',
+            legend: { position: 'bottom' }
+        };
+        var options2 = {
+            title: '気圧',
+            curveType: 'function',
+            legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+        chart.draw(data, options);
+
+        var chart2 = new google.visualization.LineChart(document.getElementById('curve_chart2'));
+        chart2.draw(data2, options2);
+    }
+</script>
